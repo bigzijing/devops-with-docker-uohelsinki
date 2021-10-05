@@ -1,0 +1,26 @@
+version: '3.5'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: BackendDockerfile
+    depends_on:
+      - redis
+    ports:
+      - 8080:8080
+    environment:
+      REDIS_HOST: redis
+
+  frontend:
+    build:
+      context: .
+      dockerfile: FrontendDockerfile
+    depends_on:
+      - backend
+    ports:
+      - 5000:5000
+
+  redis:
+    image: redis
+    restart: unless-stopped
