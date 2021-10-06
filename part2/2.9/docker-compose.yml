@@ -1,0 +1,43 @@
+version: '3.5'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: BackendDockerfile
+    depends_on:
+      - redis
+      - postgres
+    ports:
+      - 8080:8080
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PASSWORD=boban_jones
+      - POSTGRES_DATABASE=postgres
+    container_name: backend
+
+  frontend:
+    build:
+      context: .
+      dockerfile: FrontendDockerfile
+    depends_on:
+      - backend
+    ports:
+      - 5000:5000
+    container_name: frontend
+
+  redis:
+    image: redis
+    restart: unless-stopped
+    container_name: redis
+
+  postgres:
+    image: postgres:13.2-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: boban_jones
+    container_name: postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data
