@@ -12,8 +12,8 @@ WORKDIR /server
 
 EXPOSE 8080
 
-ENV REQUEST_ORIGIN http://localhost:5000
+ENV REQUEST_ORIGIN http://localhost:80
 
-COPY --from=build-stage /usr/src/app /server
+COPY --from=build-stage /usr/src/app/server /server
 
-CMD ./server
+ENTRYPOINT ["./server"]
