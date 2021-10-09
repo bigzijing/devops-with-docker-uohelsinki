@@ -1,0 +1,29 @@
+FROM ubuntu:18.04 as build-stage
+
+WORKDIR /usr/src/app
+
+COPY example-frontend/ .
+
+EXPOSE 5000
+
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl https://deb.nodesource.com/setup_14.x | bash && \ 
+    apt-get install -y nodejs && \
+    npm install && \
+    npm run build
+
+FROM alpine:3.13
+
+WORKDIR /usr/src/app/
+
+COPY --from=build-stage /usr/src/app/build/ /usr/src/app/
+
+RUN adduser -D appuser && \
+    chown -R appuser /usr/src/app
+
+USER appuser
+
+EXPOSE 5000
+
+CMD ["serve", "-s", "-l", "5000", "build"]

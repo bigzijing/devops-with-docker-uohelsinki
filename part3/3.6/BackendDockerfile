@@ -1,0 +1,19 @@
+FROM golang:alpine as build-stage
+
+WORKDIR /usr/src/app
+
+COPY example-backend/ .
+
+RUN CGO_ENABLED=0 go build
+
+FROM scratch
+
+WORKDIR /server
+
+EXPOSE 8080
+
+ENV REQUEST_ORIGIN http://localhost:5000
+
+COPY --from=build-stage /usr/src/app /server
+
+CMD ./server
